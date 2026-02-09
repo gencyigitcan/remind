@@ -17,7 +17,7 @@ This application follows a **Clean Architecture** pattern, leveraging SwiftUI fo
 #### Core Components
 
 1.  **RemindApp**: The main entry point (`@main`) managing the `NSApplicationDelegate`.
-2.  **AppController (StatusBarController)**:
+2.  **StatusBarManager**:
     *   Owns the `NSStatusBarItem`.
     *   Manages the `NSPopover` which hosts the SwiftUI view.
     *   Observes the `NoteStore` to update the menu bar title/color dynamically.
