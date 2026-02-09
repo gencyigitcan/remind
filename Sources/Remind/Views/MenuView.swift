@@ -133,16 +133,16 @@ struct MenuView: View {
                 
                 Menu {
                     if #available(macOS 13.0, *) {
-                        Toggle("Launch at Login", isOn: $launchWrapper.isEnabled)
+                        Toggle("🚀 Launch at Login", isOn: $launchWrapper.isEnabled)
                     } else {
                         Text("Update macOS to enable Launch at Login")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
                     
-                    Toggle("Show Active Count", isOn: $store.showCountOnly)
+                    Toggle("🔢 Show Active Count", isOn: $store.showCountOnly)
                     Divider()
-                    Button("Quit") {
+                    Button("🚪 Quit") {
                         NSApplication.shared.terminate(nil)
                     }
                 } label: {
@@ -254,22 +254,44 @@ struct AddNoteView: View {
             .labelsHidden()
 
             HStack {
-                Toggle("Set Time", isOn: $hasDueDate)
-                    .toggleStyle(.switch)
-                    .labelsHidden()
-                    .controlSize(.mini)
-                
                 if hasDueDate {
-                    DatePicker("", selection: $dueDate, displayedComponents: [.hourAndMinute])
-                        .labelsHidden()
+                    HStack {
+                        Image(systemName: "clock.fill")
+                            .foregroundColor(.accentColor)
+                        DatePicker("", selection: $dueDate, displayedComponents: [.hourAndMinute])
+                            .labelsHidden()
+                        
+                        Button(action: { withAnimation { hasDueDate = false } }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundColor(.secondary)
+                        }
+                        .buttonStyle(.plain)
+                        .help("Remove Time")
+                    }
+                    .padding(6)
+                    .background(Color.primary.opacity(0.05))
+                    .cornerRadius(8)
+                } else {
+                    Button(action: { withAnimation { hasDueDate = true } }) {
+                        HStack {
+                            Image(systemName: "clock")
+                            Text("Add Time")
+                        }
+                        .font(.caption)
+                        .padding(6)
+                        .padding(.horizontal, 4)
+                        .background(RoundedRectangle(cornerRadius: 8).stroke(Color.primary.opacity(0.2), lineWidth: 1))
+                    }
+                    .buttonStyle(.plain)
+                    .foregroundColor(.secondary)
                 }
                 Spacer()
             }
 
             HStack {
-                Button("Cancel", action: onCancel)
+                Button("❌ Cancel", action: onCancel)
                 Spacer()
-                Button(isEditing ? "Save" : "Add Note", action: onSave)
+                Button(isEditing ? "💾 Save" : "✨ Add", action: onSave)
                     .disabled(text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                     .keyboardShortcut(.defaultAction)
             }

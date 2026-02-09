@@ -40,24 +40,25 @@ struct NoteRow: View {
                             .font(.system(size: 10))
                     }
                     .buttonStyle(.plain)
-                    .help("Edit Note")
+                    .help("✏️ Edit")
                     
                     Button(action: onSnooze) {
                         Image(systemName: "clock")
                             .font(.system(size: 10))
                     }
                     .buttonStyle(.plain)
-                    .help("Snooze for 1 hour")
+                    .help("💤 Snooze 1h")
 
                     Button(action: onComplete) {
                         Image(systemName: "checkmark")
                             .font(.system(size: 10))
                     }
                     .buttonStyle(.plain)
-                    .help("Mark as Completed")
+                    .help("✅ Complete")
                 }
                 .transition(.opacity)
             }
+
         }
         .padding(.vertical, 8)
         .padding(.horizontal, 12)
