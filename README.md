@@ -8,6 +8,7 @@ A simple, unobtrusive reminder application for macOS that lives in your menu bar
 - **Clean Architecture**: Built with SwiftUI and a robust Clean Architecture pattern.
 - **Persistence**: Reminders are saved automatically.
 - **Notifications**: Get notified based on risk levels and due times.
+- **Due Date Reminders**: Set a specific time for tasks and get notified 15m, 1h, and 3h before.
 
 ## Code Overview
 
@@ -52,6 +53,7 @@ This application follows a **Clean Architecture** pattern, leveraging SwiftUI fo
 *   `createdAt`: Date
 *   `completedAt`: Date?
 *   `snoozeUntil`: Date?
+*   `dueDate`: Date? (Triggers notifications 15m, 1h, 3h before)
 
 ### State Flow
 User Action -> SwiftUI View -> NoteStore -> UserDefaults / NotificationManager -> StatusBarController -> macOS Menu Bar

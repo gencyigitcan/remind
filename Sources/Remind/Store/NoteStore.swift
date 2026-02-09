@@ -27,14 +27,18 @@ class NoteStore: ObservableObject {
         activeNotes.first // Already sorted by risk
     }
 
-    func addNote(_ text: String, risk: RiskLevel) -> Bool {
+    func addNote(_ text: String, risk: RiskLevel, dueDate: Date? = nil) -> Bool {
         if activeNotes.count >= 5 { return false }
         
-        let newNote = Note(text: text, risk: risk, status: .active)
+        let newNote = Note(text: text, risk: risk, status: .active, dueDate: dueDate)
         notes.append(newNote)
         
         if risk.rawValue >= 4 {
             NotificationManager.shared.scheduleHighRiskReminder(for: newNote)
+        }
+        
+        if let _ = dueDate {
+            NotificationManager.shared.scheduleDueDateReminders(for: newNote)
         }
         
         return true

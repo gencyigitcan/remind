@@ -16,12 +16,21 @@ struct NoteRow: View {
                 .shadow(color: note.risk.color.opacity(0.5), radius: 2)
 
             // Text
-            Text(note.text)
-                .font(.system(size: 13))
-                .foregroundColor(.primary)
-                .lineLimit(2)
-                .fixedSize(horizontal: false, vertical: true)
-                .frame(maxWidth: .infinity, alignment: .leading)
+            // Text and Detail
+            VStack(alignment: .leading, spacing: 2) {
+                Text(note.text)
+                    .font(.system(size: 13))
+                    .foregroundColor(.primary)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
+                
+                if let due = note.dueDate {
+                    Text("Due: \(due.formatted(date: .omitted, time: .shortened))")
+                        .font(.system(size: 10))
+                        .foregroundColor(.secondary)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
 
             // Actions - visible on hover or if space permits
             if isHovering {

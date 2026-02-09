@@ -47,8 +47,9 @@ struct Note: Identifiable, Codable, Equatable {
     let createdAt: Date
     var completedAt: Date?
     var snoozeUntil: Date?
+    var dueDate: Date?
 
-    init(id: UUID = UUID(), text: String, risk: RiskLevel, status: NoteStatus = .active, createdAt: Date = Date(), completedAt: Date? = nil, snoozeUntil: Date? = nil) {
+    init(id: UUID = UUID(), text: String, risk: RiskLevel, status: NoteStatus = .active, createdAt: Date = Date(), completedAt: Date? = nil, snoozeUntil: Date? = nil, dueDate: Date? = nil) {
         self.id = id
         self.text = text
         self.risk = risk
@@ -56,6 +57,7 @@ struct Note: Identifiable, Codable, Equatable {
         self.createdAt = createdAt
         self.completedAt = completedAt
         self.snoozeUntil = snoozeUntil
+        self.dueDate = dueDate
     }
 }
 

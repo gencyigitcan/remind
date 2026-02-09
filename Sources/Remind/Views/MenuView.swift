@@ -17,6 +17,8 @@ struct MenuView: View {
     @State private var showingAddNote = false
     @State private var newNoteText = ""
     @State private var newNoteRisk = RiskLevel.three
+    @State private var newNoteDueDate = Date()
+    @State private var hasDueDate = false
     @State private var showHistory = false
 
     var body: some View {
@@ -47,9 +49,13 @@ struct MenuView: View {
                 AddNoteView(
                     text: $newNoteText,
                     risk: $newNoteRisk,
+                    hasDueDate: $hasDueDate,
+                    dueDate: $newNoteDueDate,
                     onSave: {
-                        if store.addNote(newNoteText, risk: newNoteRisk) {
+                        let finalDate = hasDueDate ? newNoteDueDate : nil
+                        if store.addNote(newNoteText, risk: newNoteRisk, dueDate: finalDate) {
                             newNoteText = ""
+                            hasDueDate = false
                             showingAddNote = false
                         }
                     },
@@ -166,6 +172,8 @@ class LaunchWrapper: ObservableObject {
 struct AddNoteView: View {
     @Binding var text: String
     @Binding var risk: RiskLevel
+    @Binding var hasDueDate: Bool
+    @Binding var dueDate: Date
     var onSave: () -> Void
     var onCancel: () -> Void
     
@@ -189,6 +197,19 @@ struct AddNoteView: View {
             }
             .pickerStyle(.menu) // Menu style saves space vs segmented
             .labelsHidden()
+
+            HStack {
+                Toggle("Set Time", isOn: $hasDueDate)
+                    .toggleStyle(.switch)
+                    .labelsHidden()
+                    .controlSize(.mini)
+                
+                if hasDueDate {
+                    DatePicker("", selection: $dueDate, displayedComponents: [.hourAndMinute])
+                        .labelsHidden()
+                }
+                Spacer()
+            }
 
             HStack {
                 Button("Cancel", action: onCancel)
