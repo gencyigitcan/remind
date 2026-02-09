@@ -15,6 +15,7 @@ struct MenuView: View {
     @StateObject private var launchWrapper = LaunchWrapper()
     
     @State private var showingAddNote = false
+    @State private var editingNote: Note? // Track note being edited
     @State private var newNoteText = ""
     @State private var newNoteRisk = RiskLevel.three
     @State private var newNoteDueDate = Date()
@@ -30,7 +31,10 @@ struct MenuView: View {
                     .fontWeight(.bold)
                 Spacer()
                 
-                Button(action: { showingAddNote.toggle() }) {
+                Button(action: { 
+                    prepareAddNote()
+                    showingAddNote.toggle() 
+                }) {
                     Image(systemName: "plus")
                         .font(.title3)
                 }
@@ -45,22 +49,41 @@ struct MenuView: View {
             Divider()
 
             // Main Content Area
-            if showingAddNote {
+            if showingAddNote, editingNote == nil {
+                // Add Mode
                 AddNoteView(
                     text: $newNoteText,
                     risk: $newNoteRisk,
                     hasDueDate: $hasDueDate,
                     dueDate: $newNoteDueDate,
+                    isEditing: false,
                     onSave: {
                         let finalDate = hasDueDate ? newNoteDueDate : nil
                         if store.addNote(newNoteText, risk: newNoteRisk, dueDate: finalDate) {
-                            newNoteText = ""
-                            hasDueDate = false
-                            showingAddNote = false
+                            resetForm()
                         }
                     },
                     onCancel: {
-                        showingAddNote = false
+                        resetForm()
+                    }
+                )
+                .padding()
+                .transition(.opacity.combined(with: .move(edge: .top)))
+            } else if let noteToEdit = editingNote {
+                // Edit Mode
+                AddNoteView(
+                    text: $newNoteText,
+                    risk: $newNoteRisk,
+                    hasDueDate: $hasDueDate,
+                    dueDate: $newNoteDueDate,
+                    isEditing: true,
+                    onSave: {
+                        let finalDate = hasDueDate ? newNoteDueDate : nil
+                        store.updateNote(id: noteToEdit.id, text: newNoteText, risk: newNoteRisk, dueDate: finalDate)
+                        resetForm()
+                    },
+                    onCancel: {
+                        resetForm()
                     }
                 )
                 .padding()
@@ -87,6 +110,8 @@ struct MenuView: View {
                         withAnimation {
                             store.snoozeNote(id: note.id, until: oneHour)
                         }
+                    }, onEdit: {
+                        prepareEditNote(note)
                     })
                     .listRowInsets(EdgeInsets()) 
                     .padding(.vertical, 4)
@@ -132,6 +157,35 @@ struct MenuView: View {
         }
         .frame(width: 300, height: 400)
     }
+    
+    private func prepareAddNote() {
+        newNoteText = ""
+        newNoteRisk = .three
+        newNoteDueDate = Date()
+        hasDueDate = false
+        editingNote = nil
+    }
+    
+    private func prepareEditNote(_ note: Note) {
+        newNoteText = note.text
+        newNoteRisk = note.risk
+        if let due = note.dueDate {
+            newNoteDueDate = due
+            hasDueDate = true
+        } else {
+            newNoteDueDate = Date()
+            hasDueDate = false
+        }
+        editingNote = note
+        showingAddNote = false // Hide adding view if open
+    }
+    
+    private func resetForm() {
+        newNoteText = ""
+        hasDueDate = false
+        showingAddNote = false
+        editingNote = nil
+    }
 }
 
 // Wrapper to handle availability
@@ -174,12 +228,13 @@ struct AddNoteView: View {
     @Binding var risk: RiskLevel
     @Binding var hasDueDate: Bool
     @Binding var dueDate: Date
+    var isEditing: Bool = false
     var onSave: () -> Void
     var onCancel: () -> Void
     
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            Text("New Reminder")
+            Text(isEditing ? "Edit Reminder" : "New Reminder")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
             
@@ -214,7 +269,7 @@ struct AddNoteView: View {
             HStack {
                 Button("Cancel", action: onCancel)
                 Spacer()
-                Button("Add Note", action: onSave)
+                Button(isEditing ? "Save" : "Add Note", action: onSave)
                     .disabled(text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                     .keyboardShortcut(.defaultAction)
             }

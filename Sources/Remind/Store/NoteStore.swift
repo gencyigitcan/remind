@@ -27,6 +27,25 @@ class NoteStore: ObservableObject {
         activeNotes.first // Already sorted by risk
     }
 
+    func updateNote(id: UUID, text: String, risk: RiskLevel, dueDate: Date? = nil) {
+        if let index = notes.firstIndex(where: { $0.id == id }) {
+            notes[index].text = text
+            notes[index].risk = risk
+            notes[index].dueDate = dueDate
+            
+            // Re-schedule notifications
+            NotificationManager.shared.cancelNotification(for: notes[index])
+            
+            if risk.rawValue >= 4 {
+                NotificationManager.shared.scheduleHighRiskReminder(for: notes[index])
+            }
+            
+            if let _ = dueDate {
+                NotificationManager.shared.scheduleDueDateReminders(for: notes[index])
+            }
+        }
+    }
+
     func addNote(_ text: String, risk: RiskLevel, dueDate: Date? = nil) -> Bool {
         if activeNotes.count >= 5 { return false }
         

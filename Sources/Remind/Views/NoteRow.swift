@@ -4,6 +4,7 @@ struct NoteRow: View {
     let note: Note
     let onComplete: () -> Void
     let onSnooze: () -> Void
+    let onEdit: () -> Void
     
     @State private var isHovering = false
 
@@ -15,7 +16,6 @@ struct NoteRow: View {
                 .frame(width: 8, height: 8)
                 .shadow(color: note.risk.color.opacity(0.5), radius: 2)
 
-            // Text
             // Text and Detail
             VStack(alignment: .leading, spacing: 2) {
                 Text(note.text)
@@ -35,6 +35,13 @@ struct NoteRow: View {
             // Actions - visible on hover or if space permits
             if isHovering {
                 HStack(spacing: 4) {
+                    Button(action: onEdit) {
+                        Image(systemName: "pencil")
+                            .font(.system(size: 10))
+                    }
+                    .buttonStyle(.plain)
+                    .help("Edit Note")
+                    
                     Button(action: onSnooze) {
                         Image(systemName: "clock")
                             .font(.system(size: 10))
