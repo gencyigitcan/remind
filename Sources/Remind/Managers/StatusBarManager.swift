@@ -94,8 +94,17 @@ class StatusBarManager: NSObject {
             ]
             // Truncate if too long
             var cleanText = highest.text.trimmingCharacters(in: .whitespacesAndNewlines)
-            if cleanText.count > 20 {
-                cleanText = String(cleanText.prefix(20)) + "..."
+            
+            // Prepend time if available
+            if let dueDate = highest.dueDate {
+                let formatter = DateFormatter()
+                formatter.dateFormat = "HH:mm"
+                let timeString = formatter.string(from: dueDate)
+                cleanText = "\(timeString) - \(cleanText)"
+            }
+            
+            if cleanText.count > 25 {
+                cleanText = String(cleanText.prefix(25)) + "..."
             }
             
             let attributedString = NSAttributedString(string: " " + cleanText, attributes: attributes)

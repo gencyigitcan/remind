@@ -28,6 +28,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let store = NoteStore()
         self.noteStore = store
         
+        // Connect NotificationManager
+        NotificationManager.shared.noteStore = store
+        
         // Initialize the status bar manager
         self.statusBarManager = StatusBarManager(noteStore: store)
         

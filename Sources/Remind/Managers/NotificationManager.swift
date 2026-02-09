@@ -1,11 +1,25 @@
 import Foundation
 import UserNotifications
 
-class NotificationManager: ObservableObject {
+class NotificationManager: NSObject, ObservableObject, UNUserNotificationCenterDelegate {
     static let shared = NotificationManager()
+    weak var noteStore: NoteStore?
 
-    init() {
+    override init() {
+        super.init()
+        UNUserNotificationCenter.current().delegate = self
         requestAuthorization()
+        setupCategories()
+    }
+    
+    private func setupCategories() {
+        let completeAction = UNNotificationAction(identifier: "COMPLETE_ACTION", title: "Complete", options: [.foreground])
+        let snoozeAction = UNNotificationAction(identifier: "SNOOZE_ACTION", title: "Snooze 15m", options: [])
+        let cancelAction = UNNotificationAction(identifier: "CANCEL_ACTION", title: "Dismiss", options: [.destructive])
+        
+        let dueCategory = UNNotificationCategory(identifier: "DUE_REMINDER", actions: [completeAction, snoozeAction, cancelAction], intentIdentifiers: [], options: .customDismissAction)
+        
+        UNUserNotificationCenter.current().setNotificationCategories([dueCategory])
     }
 
     func requestAuthorization() {
@@ -17,6 +31,53 @@ class NotificationManager: ObservableObject {
             }
         }
     }
+    
+    // Handle Actions
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        let identifier = response.notification.request.identifier
+        
+        // Extract note UUID from identifier (format: "due_suffix_UUID" or "high_risk_UUID" or just "UUID")
+        // We know most identifiers end with the UUID string.
+        // It's safer to extract it properly.
+        // Let's assume the last component after the last underscore is the UUID, OR the whole thing is the UUID.
+        
+        // However, standard identifiers I used: "due_15m_UUID", "high_risk_UUID", "UUID"
+        var uuidString = identifier
+        if let range = identifier.range(of: "_", options: .backwards) {
+               uuidString = String(identifier[range.upperBound...])
+        }
+        
+        guard let noteId = UUID(uuidString: uuidString) else {
+            completionHandler()
+            return
+        }
+        
+        switch response.actionIdentifier {
+        case "COMPLETE_ACTION":
+            DispatchQueue.main.async {
+                self.noteStore?.completeNote(id: noteId)
+            }
+        case "SNOOZE_ACTION":
+            DispatchQueue.main.async {
+                let snoozeDate = Date().addingTimeInterval(15 * 60)
+                self.noteStore?.snoozeNote(id: noteId, until: snoozeDate)
+            }
+        case "CANCEL_ACTION", UNNotificationDismissActionIdentifier:
+             // Just dismiss/cancel associated notifications if needed? 
+             // Actually if they dismiss, we do nothing usually.
+             break
+        default:
+            break
+        }
+        
+        completionHandler()
+    }
+    
+    // Show notification even if app is in foreground
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.banner, .sound, .list])
+    }
+
 
     func scheduleSnooze(for note: Note) {
         guard let fireDate = note.snoozeUntil else { return }
@@ -47,6 +108,7 @@ class NotificationManager: ObservableObject {
         content.body = note.text
         content.sound = .defaultCritical
         content.interruptionLevel = .timeSensitive
+        content.categoryIdentifier = "DUE_REMINDER"
 
         // Trigger every hour
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 3600, repeats: true)
@@ -75,6 +137,7 @@ class NotificationManager: ObservableObject {
                 content.body = "\(note.text) is due in \(suffix)."
                 content.sound = .default
                 content.interruptionLevel = .timeSensitive
+                content.categoryIdentifier = "DUE_REMINDER"
                 
                 let components = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute, .second], from: triggerDate)
                 let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
