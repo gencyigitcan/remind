@@ -48,6 +48,23 @@ graph TD
 - **3 (High)**: Calendar events default level.
 - **4-5 (Urgent/Critical)**: Triggers periodic nagging notifications every hour.
 
+## Notification Reference
+
+Remind uses a sophisticated notification system to keep you updated on your agenda.
+
+| Type | Trigger | Content | Category/Priority |
+| :--- | :--- | :--- | :--- |
+| **High Risk Alert** | Adding or syncing a Note with `Risk 4` or higher. | "⚠️ High Priority Task Added: [Task Text]" | Critical Alert (if allowed) |
+| **Due Soon (3h)** | 3 hours before a note's `dueDate`. | "Upcoming: [Task Text] in 3 hours" | Standard |
+| **Due Soon (1h)** | 1 hour before a note's `dueDate`. | "Starting in 1 hour: [Task Text]" | Standard |
+| **Immediate (15m)** | 15 minutes before a note's `dueDate`. | "⏰ Starting Soon: [Task Text]" | High Priority |
+| **Snooze Return** | When a snoozed note's `snoozeUntil` time is reached. | "Returning from snooze: [Task Text]" | Standard |
+
+### Interactive Actions
+All notifications support direct actions:
+- **Complete**: Marks the note as finished without opening the app.
+- **Snooze (1h)**: Postpones the reminder by one hour.
+
 ## Build Pipeline
 
 The `build_remind.sh` script automates the production of a distributable macOS app.
