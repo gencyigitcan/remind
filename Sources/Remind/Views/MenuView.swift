@@ -50,12 +50,22 @@ struct MenuView: View {
 
             // Mini Calendar View
             VStack(spacing: 0) {
+                HStack {
+                    Image(systemName: "calendar")
+                        .foregroundColor(.accentColor)
+                    Text("Takvim")
+                        .font(.headline)
+                    Spacer()
+                }
+                .padding(.horizontal)
+                .padding(.top, 12)
+                .padding(.bottom, 4)
+
                 DatePicker("", selection: $newNoteDueDate, displayedComponents: [.date])
                     .datePickerStyle(.graphical)
                     .labelsHidden()
                     .frame(maxHeight: 280)
-                    .padding(.horizontal)
-                    .padding(.top, 8)
+                    .padding(.horizontal, 8)
                 
                 HStack {
                     Text("Today's Agenda")
@@ -63,11 +73,15 @@ struct MenuView: View {
                         .fontWeight(.semibold)
                         .foregroundColor(.secondary)
                     Spacer()
+                    Text(Date().formatted(.dateTime.day().month().year()))
+                        .font(.caption2)
+                        .foregroundColor(.secondary.opacity(0.7))
                 }
                 .padding(.horizontal)
-                .padding(.bottom, 4)
+                .padding(.vertical, 8)
+                .background(Color(NSColor.separatorColor).opacity(0.1))
             }
-            .background(Color(NSColor.controlBackgroundColor).opacity(0.5))
+            .background(Color(NSColor.windowBackgroundColor).opacity(0.5))
 
             Divider()
 
