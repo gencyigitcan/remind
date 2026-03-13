@@ -58,7 +58,6 @@ struct MenuView: View {
                         resetForm()
                     }
                 )
-                .padding()
                 .transition(.opacity.combined(with: .move(edge: .top)))
             } else if let noteToEdit = editingNote {
                 // Edit Mode
@@ -77,7 +76,6 @@ struct MenuView: View {
                         resetForm()
                     }
                 )
-                .padding()
                 .transition(.opacity.combined(with: .move(edge: .top)))
             } else if store.activeNotes.isEmpty {
                 VStack(spacing: 8) {
@@ -287,7 +285,8 @@ struct AddNoteView: View {
                 .datePickerStyle(.graphical)
                 .labelsHidden()
                 .padding(.horizontal, 0)
-                .padding(.vertical, 8)
+                .padding(.top, 0)
+                .padding(.bottom, 8)
                 .background(Color.primary.opacity(0.02))
 
             Divider()
