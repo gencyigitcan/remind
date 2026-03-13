@@ -19,12 +19,13 @@ graph TD
 ```
 
 #### 1. UI Layer (SwiftUI + AppKit)
-- **StatusBarManager**: The bridge between AppKit's `NSStatusItem` and SwiftUI. It manages the popover life cycle and observes the `NoteStore` to keep the menu bar text in sync.
-- **MenuView & NoteRow**: Pure SwiftUI views that render the list of notes and handle user interactions (add, snooze, complete).
+- **StatusBarManager**: The bridge between AppKit's `NSStatusItem` and SwiftUI. It manages the popover life cycle and manages the enlarged popover frame (320x650) to accommodate the calendar.
+- **MenuView & NoteRow**: Pure SwiftUI views. `MenuView` now includes a `.graphical` style `DatePicker` for the mini calendar view and localized empty state handling.
 
 #### 2. Logic & Storage Layer
-- **NoteStore**: The central state manager. It implements protocols for adding, updating, and deleting notes. It handles the "Sync with Calendar" trigger and enforces the 10-note limit. It also pushes manual notes with due dates to the `CalendarManager`.
-- **UserDefaults Persistence**: Notes are serialized to JSON and stored in `UserDefaults` for lightweight persistence.
+- **NoteStore**: The central state manager. It implements protocols for adding, updating, and deleting notes. It handles the "Sync with Calendar" trigger and pushes manual notes with due dates to the `CalendarManager`.
+- **UserDefaults Persistence**: Notes are serialized to JSON and stored in `UserDefaults`.
+- **Store Manifest (apps.json)**: A standard manifest for `wvw.dev` distribution, linking the GitHub repository, categories, and direct download links.
 
 #### 3. System Integrations
 - **CalendarManager (EventKit)**: Encapsulates all interactions with macOS Calendar. It handles permission requests, fetches meetings, and adds new events for manual reminders.

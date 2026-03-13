@@ -48,6 +48,29 @@ struct MenuView: View {
 
             Divider()
 
+            // Mini Calendar View
+            VStack(spacing: 0) {
+                DatePicker("", selection: $newNoteDueDate, displayedComponents: [.date])
+                    .datePickerStyle(.graphical)
+                    .labelsHidden()
+                    .frame(maxHeight: 280)
+                    .padding(.horizontal)
+                    .padding(.top, 8)
+                
+                HStack {
+                    Text("Today's Agenda")
+                        .font(.caption)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.secondary)
+                    Spacer()
+                }
+                .padding(.horizontal)
+                .padding(.bottom, 4)
+            }
+            .background(Color(NSColor.controlBackgroundColor).opacity(0.5))
+
+            Divider()
+
             // Main Content Area
             if showingAddNote, editingNote == nil {
                 // Add Mode
@@ -89,16 +112,19 @@ struct MenuView: View {
                 .padding()
                 .transition(.opacity.combined(with: .move(edge: .top)))
             } else if store.activeNotes.isEmpty {
-                VStack(spacing: 12) {
-                    Image(systemName: "list.bullet.clipboard")
+                VStack(spacing: 8) {
+                    Text("☕️")
                         .font(.largeTitle)
+                    Text("Bugün bir program yok")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
                         .foregroundColor(.secondary)
-                    Text("No active reminders")
-                        .font(.body)
-                        .foregroundColor(.secondary)
+                    Text("Dinlenmek için harika bir gün!")
+                        .font(.caption2)
+                        .foregroundColor(.secondary.opacity(0.8))
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .padding(.vertical, 40)
+                .padding(.vertical, 20)
             } else {
                 List(store.activeNotes) { note in
                     NoteRow(note: note, onComplete: {
@@ -155,7 +181,7 @@ struct MenuView: View {
             .padding(10)
             .background(Color(NSColor.controlBackgroundColor))
         }
-        .frame(width: 300, height: 400)
+        .frame(width: 320, height: 650)
     }
     
     private func prepareAddNote() {

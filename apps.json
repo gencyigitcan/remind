@@ -1,0 +1,46 @@
+{
+  "$schema": "https://wvw.dev/apps.schema.json",
+  "store": {
+    "name": "Remind App Store",
+    "developer": "Yigitcan Genc",
+    "tagline": "Minimalist macOS Productivity Tools",
+    "github": "https://github.com/gencyigitcan/remind"
+  },
+  "categories": [
+    { "id": "macos", "name": "macOS Apps" },
+    { "id": "productivity", "name": "Productivity" },
+    { "id": "utilities", "name": "Utilities" }
+  ],
+  "apps": [
+    {
+      "id": "remind",
+      "name": "Remind",
+      "subtitle": "Unobtrusive menu bar reminders with two-way calendar sync.",
+      "description": "A minimalist menu bar app that syncs your macOS Calendar events and lets you add reminders that push back to your calendar.",
+      "longDescription": "Remind is designed for deep focus. It lives in your macOS menu bar, showing only your most critical task. It automatically pulls today's meetings from your Calendar and allows you to create new reminders that sync back. Features include smart notifications (15m, 1h, 3h before), risk-based color coding, and a built-in mini calendar for quick planning.",
+      "icon": "https://raw.githubusercontent.com/gencyigitcan/remind/main/Remind_Icon.png",
+      "iconStyle": {
+        "scale": 1.3,
+        "objectFit": "cover",
+        "borderRadius": "22%"
+      },
+      "category": ["macos", "productivity", "utilities"],
+      "platform": "macOS",
+      "price": "Free",
+      "github": "https://github.com/gencyigitcan/remind",
+      "downloadUrl": "https://github.com/gencyigitcan/remind/releases/latest/download/Remind.dmg",
+      "requirements": "macOS 13.0 or later",
+      "features": [
+        "Two-way macOS Calendar synchronization",
+        "Mini calendar view inside the menu bar popover",
+        "Risk-based priority levels and color coding",
+        "Smart reminder notifications",
+        "Launch at login support",
+        "Minimalist and clean SwiftUI interface"
+      ],
+      "screenshots": [
+        "https://raw.githubusercontent.com/gencyigitcan/remind/main/Remind_Icon.png"
+      ]
+    }
+  ]
+}
