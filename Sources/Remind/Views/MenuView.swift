@@ -48,42 +48,9 @@ struct MenuView: View {
 
             Divider()
 
-            // Mini Calendar View
-            VStack(spacing: 0) {
-                HStack {
-                    Image(systemName: "calendar")
-                        .foregroundColor(.accentColor)
-                    Text("Takvim")
-                        .font(.headline)
-                    Spacer()
-                }
-                .padding(.horizontal)
-                .padding(.top, 12)
-                .padding(.bottom, 4)
-
-                DatePicker("", selection: $newNoteDueDate, displayedComponents: [.date])
-                    .datePickerStyle(.graphical)
-                    .labelsHidden()
-                    .frame(maxHeight: 280)
-                    .padding(.horizontal, 8)
-                
-                HStack {
-                    Text("Today's Agenda")
-                        .font(.caption)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.secondary)
-                    Spacer()
-                    Text(Date().formatted(.dateTime.day().month().year()))
-                        .font(.caption2)
-                        .foregroundColor(.secondary.opacity(0.7))
-                }
-                .padding(.horizontal)
-                .padding(.vertical, 8)
-                .background(Color(NSColor.separatorColor).opacity(0.1))
-            }
-            .background(Color(NSColor.windowBackgroundColor).opacity(0.5))
-
             Divider()
+
+            // Main Content Area
 
             // Main Content Area
             if showingAddNote, editingNote == nil {
@@ -293,11 +260,15 @@ struct AddNoteView: View {
             .pickerStyle(.menu)
             .labelsHidden()
 
-            VStack(alignment: .leading, spacing: 10) {
-                DatePicker("Seçilen Tarih", selection: $dueDate, displayedComponents: [.date])
+            VStack(alignment: .leading, spacing: 0) {
+                DatePicker("Tarih Seçin", selection: $dueDate, displayedComponents: [.date])
                     .datePickerStyle(.graphical)
                     .labelsHidden()
-                    .frame(maxHeight: 280)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 5)
+                
+                Divider()
+                    .padding(.horizontal, -10)
                 
                 HStack {
                     Toggle(isOn: $hasDueDate) {
@@ -306,6 +277,7 @@ struct AddNoteView: View {
                                 .foregroundColor(hasDueDate ? .accentColor : .secondary)
                             Text("Saat Ekle")
                                 .font(.caption)
+                                .fontWeight(.medium)
                         }
                     }
                     .toggleStyle(.checkbox)
@@ -316,10 +288,11 @@ struct AddNoteView: View {
                             .transition(.opacity)
                     }
                 }
+                .padding(.top, 10)
             }
             .padding(10)
-            .background(Color.primary.opacity(0.03))
-            .cornerRadius(10)
+            .background(Color.primary.opacity(0.04))
+            .cornerRadius(12)
 
             HStack {
                 Button("❌ İptal", action: onCancel)
