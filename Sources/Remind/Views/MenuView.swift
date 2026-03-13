@@ -38,8 +38,8 @@ struct MenuView: View {
                     Image(systemName: "plus")
                         .font(.title3)
                 }
-                .disabled(store.activeNotes.count >= 5)
-                .help(store.activeNotes.count >= 5 ? "Max 5 notes reached" : "Add Note")
+                .disabled(store.activeNotes.count >= 10)
+                .help(store.activeNotes.count >= 10 ? "Max 10 notes reached" : "Add Note")
                 .buttonStyle(.plain)
             }
             .padding(.horizontal)
@@ -125,7 +125,7 @@ struct MenuView: View {
 
             // Footer
             HStack {
-                Text("\(store.activeNotes.count)/5 Active")
+                Text("\(store.activeNotes.count)/10 Active")
                     .font(.caption)
                     .foregroundColor(.secondary)
                 

@@ -48,6 +48,9 @@ class StatusBarManager: NSObject {
         } else {
             // Also refresh snoozed notes when opening
             noteStore.refreshSnoozedNotes()
+            // Sync with calendar
+            noteStore.syncWithCalendar()
+            
             popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
             
             // Bring app to front

@@ -20,5 +20,8 @@
     <true/>
     <key>LSMinimumSystemVersion</key>
     <string>13.0</string>
+    <key>NSCalendarsUsageDescription</key>
+    <string>Remind needs access to your calendar to automatically add your meetings as reminders.</string>
 </dict>
 </plist>
+

@@ -1,65 +1,52 @@
-
-# Remind
+# Remind 📅
 
 A simple, unobtrusive reminder application for macOS that lives in your menu bar. 
 
 ## Features
 - **Menu Bar Integration**: Access your reminders quickly from the menu bar.
-- **Clean Architecture**: Built with SwiftUI and a robust Clean Architecture pattern.
-- **Persistence**: Reminders are saved automatically.
-- **Notifications**: Get notified based on risk levels and due times.
-- **Due Date Reminders**: Set a specific time for tasks and get notified 15m, 1h, and 3h before.
+- **Calendar Synchronization**: Automatically syncs today's meetings from your macOS Calendar.
+- **Smart Notifications**: Get notified based on risk levels and due times (15m, 1h, and 3h before).
+- **High Capacity**: Supports up to 10 active reminders simultaneously.
+- **Persistence**: Reminders are saved automatically across sessions.
+- **Clean Architecture**: Built with SwiftUI and a robust modular patterns.
 
-## Code Overview
+## 🚀 How to Use
 
-### Architecture
-This application follows a **Clean Architecture** pattern, leveraging SwiftUI for the UI and `NSStatusBar` for native menu bar integration. The goal is a lightweight, responsive, and persistent reminder system.
+### Installation
+1. Download the latest `Remind.dmg` from the [Releases](https://github.com/gencyigitcan/remind/releases) page.
+2. Drag **Remind** to your Applications folder.
+3. Open the app. You'll see a 📅 icon (or a number) in your menu bar.
 
-#### Core Components
+### Calendar Sync
+When you first open the app or click the menu icon, Remind will request access to your Calendar. Once granted, it will automatically pull in your meetings for the day as high-priority reminders. Calendar-sourced notes are marked with a small 📅 icon.
 
-1.  **RemindApp**: The main entry point (`@main`) managing the `NSApplicationDelegate`.
-2.  **StatusBarManager**:
-    *   Owns the `NSStatusBarItem`.
-    *   Manages the `NSPopover` which hosts the SwiftUI view.
-    *   Observes the `NoteStore` to update the menu bar title/color dynamically.
-3.  **NoteStore**:
-    *   Single source of truth for the app's state.
-    *   Handles CRUD operations for `Note` objects.
-    *   Manages persistence via `UserDefaults` (JSON encoding).
-    *   Enforces business logic (max 5 active notes).
-4.  **NotificationManager**:
-    *   Handles `UNUserNotificationCenter` scheduling.
-    *   schedules/cancels notifications based on risk level and snooze status.
+## 🛠 Tech Stack & Architecture
 
-### Data Models
+- **Swift & SwiftUI**: Native macOS development.
+- **EventKit**: Deep integration with macOS Calendar events.
+- **UserNotifications**: Customized, time-sensitive alerts with snooze/action support.
+- **AppKit**: Native menu bar (NSStatusItem) and popover management.
 
-#### RiskLevel (Enum)
-*   `1 (Green)`: Low priority.
-*   `2 (Yellow)`: Moderate.
-*   `3 (Orange)`: High.
-*   `4 (Red)`: Urgent.
-*   `5 (Purple)`: Critical.
+### Core Components
+- **CalendarManager**: Handles permissions and fetches `EKEvent` data.
+- **NoteStore**: Logic for managing notes, preventing duplicates, and persistence.
+- **NotificationManager**: Orchestrates local notifications and action handling.
+- **StatusBarManager**: Manages the native macOS menu bar interface.
 
-#### NoteStatus (Enum)
-*   `active`: Currently visible in the list.
-*   `completed`: Archived/Done.
-*   `snoozed`: Hidden until a specific time.
+## 📦 Building from Source
 
-#### Note (Struct - Identifiable, Codable)
-*   `id`: UUID
-*   `text`: String
-*   `risk`: RiskLevel
-*   `status`: NoteStatus
-*   `createdAt`: Date
-*   `completedAt`: Date?
-*   `snoozeUntil`: Date?
-*   `dueDate`: Date? (Triggers notifications 15m, 1h, 3h before)
+If you want to build the app yourself:
 
-### State Flow
-User Action -> SwiftUI View -> NoteStore -> UserDefaults / NotificationManager -> StatusBarController -> macOS Menu Bar
+1.  Clone the repository.
+2.  Make sure you have Xcode or Swift installed.
+3.  Run the build script:
+    ```bash
+    bash build_remind.sh
+    ```
+4.  The script will:
+    - Build the executable in release mode.
+    - Create a signed `.app` bundle.
+    - Package everything into a `Remind.dmg`.
 
-## How to Build
-
-1.  Make sure you have Swift installed.
-2.  Run `swift build -c release` to build the executable.
-3.  Run `./.build/release/Remind` to start the app.
+## License
+MIT License - Copyright (c) 2024

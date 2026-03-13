@@ -25,9 +25,23 @@ struct NoteRow: View {
                     .fixedSize(horizontal: false, vertical: true)
                 
                 if let due = note.dueDate {
-                    Text("Due: \(due.formatted(date: .omitted, time: .shortened))")
-                        .font(.system(size: 10))
-                        .foregroundColor(.secondary)
+                    HStack(spacing: 4) {
+                        if note.source == .calendar {
+                            Image(systemName: "calendar")
+                                .font(.system(size: 9))
+                        }
+                        Text("Due: \(due.formatted(date: .omitted, time: .shortened))")
+                            .font(.system(size: 10))
+                    }
+                    .foregroundColor(.secondary)
+                } else if note.source == .calendar {
+                    HStack(spacing: 4) {
+                        Image(systemName: "calendar")
+                            .font(.system(size: 9))
+                        Text("Calendar")
+                            .font(.system(size: 10))
+                    }
+                    .foregroundColor(.secondary)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)

@@ -46,10 +46,15 @@ class NoteStore: ObservableObject {
         }
     }
 
-    func addNote(_ text: String, risk: RiskLevel, dueDate: Date? = nil) -> Bool {
-        if activeNotes.count >= 5 { return false }
+    func addNote(_ text: String, risk: RiskLevel, dueDate: Date? = nil, source: NoteSource = .manual, externalId: String? = nil) -> Bool {
+        // If it's a calendar note, check if it already exists by externalId
+        if let extId = externalId, notes.contains(where: { $0.externalId == extId }) {
+            return false
+        }
         
-        let newNote = Note(text: text, risk: risk, status: .active, dueDate: dueDate)
+        if activeNotes.count >= 10 { return false } // Increased limit for calendar events
+        
+        let newNote = Note(text: text, risk: risk, status: .active, source: source, externalId: externalId, dueDate: dueDate)
         notes.append(newNote)
         
         if risk.rawValue >= 4 {
@@ -61,6 +66,28 @@ class NoteStore: ObservableObject {
         }
         
         return true
+    }
+
+    func syncWithCalendar() {
+        CalendarManager.shared.requestAccess { granted, error in
+            if granted {
+                let events = CalendarManager.shared.fetchTodaysEvents()
+                DispatchQueue.main.async {
+                    var addedAny = false
+                    for event in events {
+                        let note = CalendarManager.shared.convertToNote(event)
+                        if self.addNote(note.text, risk: note.risk, dueDate: note.dueDate, source: .calendar, externalId: note.externalId) {
+                            addedAny = true
+                        }
+                    }
+                    if addedAny {
+                        self.save()
+                    }
+                }
+            } else {
+                print("Calendar access denied or error: \(String(describing: error))")
+            }
+        }
     }
 
     func completeNote(id: UUID) {
