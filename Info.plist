@@ -22,6 +22,9 @@
     <string>13.0</string>
     <key>NSCalendarsUsageDescription</key>
     <string>Remind needs access to your calendar to automatically add your meetings as reminders.</string>
+    <key>NSCalendarsWriteOnlyAccessUsageDescription</key>
+    <string>Remind needs permission to add your reminders as events to your calendar.</string>
 </dict>
 </plist>
+
 

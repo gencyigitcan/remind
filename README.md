@@ -4,7 +4,7 @@ A simple, unobtrusive reminder application for macOS that lives in your menu bar
 
 ## Features
 - **Menu Bar Integration**: Access your reminders quickly from the menu bar.
-- **Calendar Synchronization**: Automatically syncs today's meetings from your macOS Calendar.
+- **Two-Way Calendar Synchronization**: Automatically syncs today's meetings *from* your calendar AND pushes manual reminders *to* your calendar.
 - **Smart Notifications**: Get notified based on risk levels and due times (15m, 1h, and 3h before).
 - **High Capacity**: Supports up to 10 active reminders simultaneously.
 - **Persistence**: Reminders are saved automatically across sessions.
@@ -18,7 +18,11 @@ A simple, unobtrusive reminder application for macOS that lives in your menu bar
 3. Open the app. You'll see a 📅 icon (or a number) in your menu bar.
 
 ### Calendar Sync
-When you first open the app or click the menu icon, Remind will request access to your Calendar. Once granted, it will automatically pull in your meetings for the day as high-priority reminders. Calendar-sourced notes are marked with a small 📅 icon.
+#### Fetching Events
+Remind will automatically pull in your meetings for the day as high-priority reminders. Calendar-sourced notes are marked with a small 📅 icon.
+
+#### Pushing Events
+When you manually add a reminder with a **due time** set, Remind will automatically create a corresponding event in your macOS Calendar.
 
 ## 🛠 Tech Stack & Architecture
 

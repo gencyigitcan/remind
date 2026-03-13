@@ -54,7 +54,14 @@ class NoteStore: ObservableObject {
         
         if activeNotes.count >= 10 { return false } // Increased limit for calendar events
         
-        let newNote = Note(text: text, risk: risk, status: .active, source: source, externalId: externalId, dueDate: dueDate)
+        var finalExternalId = externalId
+        
+        // If it's a manual note with a due date, try to add it to the calendar
+        if source == .manual, let dueDate = dueDate, finalExternalId == nil {
+            finalExternalId = CalendarManager.shared.addEvent(title: text, startDate: dueDate)
+        }
+        
+        let newNote = Note(text: text, risk: risk, status: .active, source: source, externalId: finalExternalId, dueDate: dueDate)
         notes.append(newNote)
         
         if risk.rawValue >= 4 {

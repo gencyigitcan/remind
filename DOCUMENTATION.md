@@ -23,11 +23,11 @@ graph TD
 - **MenuView & NoteRow**: Pure SwiftUI views that render the list of notes and handle user interactions (add, snooze, complete).
 
 #### 2. Logic & Storage Layer
-- **NoteStore**: The central state manager. It implements protocols for adding, updating, and deleting notes. It handles the "Sync with Calendar" trigger and enforces the 10-note limit.
+- **NoteStore**: The central state manager. It implements protocols for adding, updating, and deleting notes. It handles the "Sync with Calendar" trigger and enforces the 10-note limit. It also pushes manual notes with due dates to the `CalendarManager`.
 - **UserDefaults Persistence**: Notes are serialized to JSON and stored in `UserDefaults` for lightweight persistence.
 
 #### 3. System Integrations
-- **CalendarManager (EventKit)**: Encapsulates all interactions with macOS Calendar. It handles permission requests and uses `EKEventStore` predicates to fetch events for the current day.
+- **CalendarManager (EventKit)**: Encapsulates all interactions with macOS Calendar. It handles permission requests, fetches meetings, and adds new events for manual reminders.
 - **NotificationManager (UserNotifications)**: Schedules local notifications. It supports "Critical Alerts" for high-risk notes and handles interactive actions (Complete/Snooze) directly from the notification banner.
 
 ## Data Schema

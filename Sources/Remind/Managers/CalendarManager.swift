@@ -43,4 +43,20 @@ class CalendarManager {
             dueDate: event.startDate
         )
     }
+    
+    func addEvent(title: String, startDate: Date) -> String? {
+        let event = EKEvent(eventStore: eventStore)
+        event.title = title
+        event.startDate = startDate
+        event.endDate = startDate.addingTimeInterval(1800) // Default 30 min duration
+        event.calendar = eventStore.defaultCalendarForNewEvents
+        
+        do {
+            try eventStore.save(event, span: .thisEvent)
+            return event.eventIdentifier
+        } catch {
+            print("Failed to save event to calendar: \(error)")
+            return nil
+        }
+    }
 }
