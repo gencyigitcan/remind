@@ -3,19 +3,10 @@ import ServiceManagement
 
 struct MenuView: View {
     @EnvironmentObject var store: NoteStore
-    // We instantiate LaunchAtLoginManager inside @StateObject if available
-    // But since #available cannot be used as an expression for properties, 
-    // we use a workaround or conditionally initialize.
-    // For simplicity, we just use the manager, which handles availability checks implicitly if we make it conditional, 
-    // OR we can make it safe.
-    // Wait, the manager class itself has @available(macOS 13.0, *).
-    // So we need to conditionally instantiate it or wrap it.
-    
-    // Simplest way: A wrapper
     @StateObject private var launchWrapper = LaunchWrapper()
     
     @State private var showingAddNote = false
-    @State private var editingNote: Note? // Track note being edited
+    @State private var editingNote: Note?
     @State private var newNoteText = ""
     @State private var newNoteRisk = RiskLevel.three
     @State private var newNoteDueDate = Date()
@@ -47,10 +38,6 @@ struct MenuView: View {
             .background(Color(NSColor.windowBackgroundColor))
 
             Divider()
-
-            Divider()
-
-            // Main Content Area
 
             // Main Content Area
             if showingAddNote, editingNote == nil {
@@ -126,8 +113,6 @@ struct MenuView: View {
                 .listStyle(.plain)
             }
             
-            Spacer()
-
             Divider()
 
             // Footer
@@ -162,7 +147,8 @@ struct MenuView: View {
             .padding(10)
             .background(Color(NSColor.controlBackgroundColor))
         }
-        .frame(width: 320, height: 750)
+        .frame(minWidth: 320, maxWidth: 320)
+        .frame(minHeight: 150, maxHeight: 800)
     }
     
     private func prepareAddNote() {
@@ -184,7 +170,7 @@ struct MenuView: View {
             hasDueDate = false
         }
         editingNote = note
-        showingAddNote = false // Hide adding view if open
+        showingAddNote = false
     }
     
     private func resetForm() {
@@ -195,7 +181,6 @@ struct MenuView: View {
     }
 }
 
-// Wrapper to handle availability
 class LaunchWrapper: ObservableObject {
     @Published var isEnabled: Bool = false {
         didSet {
@@ -229,7 +214,6 @@ class LaunchWrapper: ObservableObject {
     }
 }
 
-// Inline helper for adding a note
 struct AddNoteView: View {
     @Binding var text: String
     @Binding var risk: RiskLevel
@@ -247,7 +231,7 @@ struct AddNoteView: View {
             
             TextField("Enter note...", text: $text)
                 .textFieldStyle(.roundedBorder)
-                .onSubmit(onSave) // Allow Enter to save
+                .onSubmit(onSave)
             
             Picker("Priority", selection: $risk) {
                 ForEach(RiskLevel.allCases) { level in
