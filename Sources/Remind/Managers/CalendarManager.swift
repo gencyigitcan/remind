@@ -8,7 +8,18 @@ class CalendarManager {
     private init() {}
     
     func requestAccess(completion: @escaping (Bool, Error?) -> Void) {
+        let status = EKEventStore.authorizationStatus(for: .event)
+        
+        if status == .authorized {
+            completion(true, nil)
+            return
+        }
+        
         if #available(macOS 14.0, *) {
+            if status == .fullAccess {
+                completion(true, nil)
+                return
+            }
             eventStore.requestFullAccessToEvents(completion: completion)
         } else {
             eventStore.requestAccess(to: .event, completion: completion)
@@ -23,10 +34,8 @@ class CalendarManager {
         let predicate = eventStore.predicateForEvents(withStart: startOfDay, end: endOfDay, calendars: nil)
         let events = eventStore.events(matching: predicate)
         
-        // Filter out all-day events if they are not relevant, or keep them. 
-        // For reminders, we probably want timed events mostly, but let's keep all and let the user decide.
-        // Also filter out cancelled events.
-        return events.filter { $0.status != .canceled }
+        // Filter out events that have already ended and cancelled events
+        return events.filter { $0.status != .canceled && $0.endDate > now }
     }
     
     func convertToNote(_ event: EKEvent) -> Note {

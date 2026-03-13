@@ -80,14 +80,30 @@ class NoteStore: ObservableObject {
             if granted {
                 let events = CalendarManager.shared.fetchTodaysEvents()
                 DispatchQueue.main.async {
-                    var addedAny = false
+                    let now = Date()
+                    var changed = false
+                    
+                    // Auto-complete calendar notes that have already passed their due date
+                    for index in self.notes.indices {
+                        if self.notes[index].source == .calendar,
+                           self.notes[index].status == .active,
+                           let dueDate = self.notes[index].dueDate,
+                           dueDate < now.addingTimeInterval(-3600) { // Keep them for 1 hour after start? or just complete immediately?
+                            // For now, let's just complete them if they are in the past
+                            self.notes[index].status = .completed
+                            self.notes[index].completedAt = now
+                            changed = true
+                        }
+                    }
+                    
                     for event in events {
                         let note = CalendarManager.shared.convertToNote(event)
                         if self.addNote(note.text, risk: note.risk, dueDate: note.dueDate, source: .calendar, externalId: note.externalId) {
-                            addedAny = true
+                            changed = true
                         }
                     }
-                    if addedAny {
+                    
+                    if changed {
                         self.save()
                     }
                 }
