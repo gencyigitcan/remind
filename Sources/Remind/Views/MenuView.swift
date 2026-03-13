@@ -195,7 +195,7 @@ struct MenuView: View {
             .padding(10)
             .background(Color(NSColor.controlBackgroundColor))
         }
-        .frame(width: 320, height: 650)
+        .frame(width: 320, height: 750)
     }
     
     private func prepareAddNote() {
@@ -290,56 +290,49 @@ struct AddNoteView: View {
                     }.tag(level)
                 }
             }
-            .pickerStyle(.menu) // Menu style saves space vs segmented
+            .pickerStyle(.menu)
             .labelsHidden()
 
-            HStack {
-                if hasDueDate {
-                    HStack {
-                        Image(systemName: "clock.fill")
-                            .foregroundColor(.accentColor)
-                        DatePicker("", selection: $dueDate, displayedComponents: [.hourAndMinute])
-                            .labelsHidden()
-                        
-                        Button(action: { withAnimation { hasDueDate = false } }) {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundColor(.secondary)
-                        }
-                        .buttonStyle(.plain)
-                        .help("Remove Time")
-                    }
-                    .padding(6)
-                    .background(Color.primary.opacity(0.05))
-                    .cornerRadius(8)
-                } else {
-                    Button(action: { withAnimation { hasDueDate = true } }) {
+            VStack(alignment: .leading, spacing: 10) {
+                DatePicker("Seçilen Tarih", selection: $dueDate, displayedComponents: [.date])
+                    .datePickerStyle(.graphical)
+                    .labelsHidden()
+                    .frame(maxHeight: 280)
+                
+                HStack {
+                    Toggle(isOn: $hasDueDate) {
                         HStack {
                             Image(systemName: "clock")
-                            Text("Add Time")
+                                .foregroundColor(hasDueDate ? .accentColor : .secondary)
+                            Text("Saat Ekle")
+                                .font(.caption)
                         }
-                        .font(.caption)
-                        .padding(6)
-                        .padding(.horizontal, 4)
-                        .background(RoundedRectangle(cornerRadius: 8).stroke(Color.primary.opacity(0.2), lineWidth: 1))
                     }
-                    .buttonStyle(.plain)
-                    .foregroundColor(.secondary)
+                    .toggleStyle(.checkbox)
+                    
+                    if hasDueDate {
+                        DatePicker("", selection: $dueDate, displayedComponents: [.hourAndMinute])
+                            .labelsHidden()
+                            .transition(.opacity)
+                    }
                 }
-                Spacer()
             }
+            .padding(10)
+            .background(Color.primary.opacity(0.03))
+            .cornerRadius(10)
 
             HStack {
-                Button("❌ Cancel", action: onCancel)
+                Button("❌ İptal", action: onCancel)
                 Spacer()
-                Button(isEditing ? "💾 Save" : "✨ Add", action: onSave)
+                Button(isEditing ? "💾 Kaydet" : "✨ Ekle", action: onSave)
                     .disabled(text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                     .keyboardShortcut(.defaultAction)
             }
         }
         .padding()
-        .background(RoundedRectangle(cornerRadius: 10).fill(Color(NSColor.controlBackgroundColor)))
+        .background(RoundedRectangle(cornerRadius: 12).fill(Color(NSColor.controlBackgroundColor)))
         .overlay(
-            RoundedRectangle(cornerRadius: 10)
+            RoundedRectangle(cornerRadius: 12)
                 .stroke(Color.primary.opacity(0.1), lineWidth: 1)
         )
     }
