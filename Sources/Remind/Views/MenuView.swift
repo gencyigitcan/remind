@@ -249,7 +249,7 @@ struct AddNoteView: View {
                     .datePickerStyle(.graphical)
                     .labelsHidden()
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 5)
+                    .padding(.horizontal, -5) // Stretch slightly to fill container
                 
                 Divider()
                     .padding(.horizontal, -10)
@@ -275,8 +275,8 @@ struct AddNoteView: View {
                 .padding(.top, 10)
             }
             .padding(10)
-            .background(Color.primary.opacity(0.04))
-            .cornerRadius(12)
+            .background(Color(NSColor.alternatingContentBackgroundColors[1]).opacity(0.5))
+            .cornerRadius(8)
 
             HStack {
                 Button("❌ İptal", action: onCancel)
