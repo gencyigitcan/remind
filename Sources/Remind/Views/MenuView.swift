@@ -224,73 +224,97 @@ struct AddNoteView: View {
     var onCancel: () -> Void
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text(isEditing ? "Edit Reminder" : "New Reminder")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-            
-            TextField("Enter note...", text: $text)
-                .textFieldStyle(.roundedBorder)
-                .onSubmit(onSave)
-            
-            Picker("Priority", selection: $risk) {
-                ForEach(RiskLevel.allCases) { level in
-                    HStack {
-                        Circle().fill(level.color).frame(width: 8, height: 8)
-                        Text(level.description)
-                    }.tag(level)
-                }
-            }
-            .pickerStyle(.menu)
-            .labelsHidden()
-
-            VStack(alignment: .leading, spacing: 0) {
-                DatePicker("Tarih Seçin", selection: $dueDate, displayedComponents: [.date])
-                    .datePickerStyle(.graphical)
-                    .labelsHidden()
-                    .frame(maxWidth: .infinity)
-                    .padding(.horizontal, -5) // Stretch slightly to fill container
-                
-                Divider()
-                    .padding(.horizontal, -10)
-                
+        VStack(spacing: 0) {
+            // Header & Inputs (with padding)
+            VStack(alignment: .leading, spacing: 10) {
                 HStack {
-                    Toggle(isOn: $hasDueDate) {
-                        HStack {
-                            Image(systemName: "clock")
-                                .foregroundColor(hasDueDate ? .accentColor : .secondary)
-                            Text("Saat Ekle")
-                                .font(.caption)
-                                .fontWeight(.medium)
+                    Text(isEditing ? "Hemen Düzenle" : "Yeni Hatırlatıcı")
+                        .font(.caption)
+                        .fontWeight(.bold)
+                        .foregroundColor(.secondary)
+                    Spacer()
+                }
+                
+                TextField("Ne hatırlatayım?", text: $text)
+                    .textFieldStyle(.plain)
+                    .font(.body)
+                    .padding(8)
+                    .background(Color(NSColor.controlBackgroundColor))
+                    .cornerRadius(6)
+                    .overlay(RoundedRectangle(cornerRadius: 6).stroke(Color.primary.opacity(0.1), lineWidth: 1))
+                    .onSubmit(onSave)
+                
+                HStack(spacing: 12) {
+                    Picker("", selection: $risk) {
+                        ForEach(RiskLevel.allCases) { level in
+                            HStack {
+                                Circle().fill(level.color).frame(width: 8, height: 8)
+                                Text(level.description)
+                            }.tag(level)
                         }
+                    }
+                    .pickerStyle(.menu)
+                    .labelsHidden()
+                    .frame(width: 120)
+                    
+                    Spacer()
+                    
+                    Toggle(isOn: $hasDueDate) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "clock")
+                            Text("Saat")
+                        }
+                        .font(.caption)
+                        .fontWeight(.medium)
                     }
                     .toggleStyle(.checkbox)
                     
                     if hasDueDate {
                         DatePicker("", selection: $dueDate, displayedComponents: [.hourAndMinute])
                             .labelsHidden()
-                            .transition(.opacity)
+                            .scaleEffect(0.9)
                     }
                 }
-                .padding(.top, 10)
             }
-            .padding(10)
-            .background(Color(NSColor.alternatingContentBackgroundColors[1]).opacity(0.5))
-            .cornerRadius(8)
+            .padding(.horizontal, 16)
+            .padding(.top, 16)
+            .padding(.bottom, 12)
 
-            HStack {
-                Button("❌ İptal", action: onCancel)
-                Spacer()
-                Button(isEditing ? "💾 Kaydet" : "✨ Ekle", action: onSave)
-                    .disabled(text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-                    .keyboardShortcut(.defaultAction)
+            Divider()
+
+            // Calendar (FLUSH - No horizontal padding)
+            DatePicker("", selection: $dueDate, displayedComponents: [.date])
+                .datePickerStyle(.graphical)
+                .labelsHidden()
+                .padding(.horizontal, 0)
+                .padding(.vertical, 8)
+                .background(Color.primary.opacity(0.02))
+
+            Divider()
+
+            // Footer Actions (with padding)
+            HStack(spacing: 12) {
+                Button(action: onCancel) {
+                    Text("İptal")
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.bordered)
+                .controlSize(.large)
+                
+                Button(action: onSave) {
+                    Text(isEditing ? "Kaydet" : "Ekle")
+                        .fontWeight(.bold)
+                        .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.borderedProminent)
+                .controlSize(.large)
+                .disabled(text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                .keyboardShortcut(.defaultAction)
             }
+            .padding(16)
         }
-        .padding()
-        .background(RoundedRectangle(cornerRadius: 12).fill(Color(NSColor.controlBackgroundColor)))
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color.primary.opacity(0.1), lineWidth: 1)
-        )
+        .background(Color(NSColor.windowBackgroundColor))
+        .cornerRadius(16)
+        .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
     }
 }
